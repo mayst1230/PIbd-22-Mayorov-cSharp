@@ -1,17 +1,20 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
 
 
 namespace WindowsFormsBus
 {
-    public class Bus : Vehicle
+    public class Bus: Vehicle
     {
-        private readonly double changeWidth = 0.9;
-        private readonly double changeHeight = 1;
         protected readonly int busWidth = 190;
         /// <summary>
         /// Высота отрисовки автомобиля
         /// </summary>
-        protected readonly int busHeight = 50;
+        protected readonly int busHeight = 100;
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -46,7 +49,7 @@ namespace WindowsFormsBus
             switch (direction)
             {
                 case Direction.Right:
-                    if (_startPosX + step < pictureWidth - busWidth * changeWidth)
+                    if (_startPosX + step < pictureWidth - busWidth)
                     {
                         _startPosX += step;
                     }
@@ -67,7 +70,7 @@ namespace WindowsFormsBus
                     break;
 
                 case Direction.Down:
-                    if (_startPosY + step < pictureHeight - busHeight * changeHeight)
+                    if (_startPosY + step < pictureHeight - busHeight)
                     {
                         _startPosY += step;
                     }
@@ -75,8 +78,7 @@ namespace WindowsFormsBus
             }
         }
 
-        public override void DrawBus(Graphics g)
-        {
+        public override void DrawBus(Graphics g) {
             Pen pen = new Pen(Color.Black);
             Brush body = new SolidBrush(MainColor);
             Brush wheels = new SolidBrush(Color.Black);
