@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsBus
@@ -31,10 +37,8 @@ namespace WindowsFormsBus
 
         private void buttonMove_Click(object sender, EventArgs e)
         {
-            if (Bus != null)
-            {
-                //получаем имя кнопки     
-                string name = (sender as Button).Name;
+            //получаем имя кнопки     
+            string name = (sender as Button).Name;
                 switch (name)
                 {
                     case "buttonUp":
@@ -49,9 +53,8 @@ namespace WindowsFormsBus
                     case "buttonRight":
                         Bus.MoveBus(Direction.Right);
                         break;
-                }
-                Draw();
             }
+            Draw();
         }
 
         private void buttonCreateAccordionBus_Click(object sender, EventArgs e)
