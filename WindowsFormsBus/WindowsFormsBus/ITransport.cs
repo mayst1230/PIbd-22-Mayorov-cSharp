@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace WindowsFormsBus
 {
-    interface ITransport
+    public interface ITransport
     {
         /// <param name="x">Координата X</param>
         /// <param name="y">Координата Y</param>
@@ -17,7 +12,7 @@ namespace WindowsFormsBus
 
         /// <param name="direction">Направление</param>
         void MoveBus(Direction direction);
-       
+
         /// <param name="g"><
         void DrawBus(Graphics g);
     }

@@ -34,8 +34,6 @@
             this.buttonLeft = new System.Windows.Forms.Button();
             this.buttonRight = new System.Windows.Forms.Button();
             this.buttonDown = new System.Windows.Forms.Button();
-            this.buttonCreate = new System.Windows.Forms.Button();
-            this.buttonCreateAccordionBus = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBus)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,34 +94,11 @@
             this.buttonDown.UseVisualStyleBackColor = true;
             this.buttonDown.Click += new System.EventHandler(this.buttonMove_Click);
             // 
-            // buttonCreate
-            // 
-            this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCreate.Location = new System.Drawing.Point(28, 25);
-            this.buttonCreate.Name = "buttonCreate";
-            this.buttonCreate.Size = new System.Drawing.Size(115, 23);
-            this.buttonCreate.TabIndex = 6;
-            this.buttonCreate.Text = "Создать автобус";
-            this.buttonCreate.UseVisualStyleBackColor = true;
-            this.buttonCreate.Click += new System.EventHandler(this.buttonCreateBus_Click);
-            // 
-            // buttonCreateAccordionBus
-            // 
-            this.buttonCreateAccordionBus.Location = new System.Drawing.Point(166, 23);
-            this.buttonCreateAccordionBus.Name = "buttonCreateAccordionBus";
-            this.buttonCreateAccordionBus.Size = new System.Drawing.Size(197, 24);
-            this.buttonCreateAccordionBus.TabIndex = 7;
-            this.buttonCreateAccordionBus.Text = "Создать автобус с гормошкой";
-            this.buttonCreateAccordionBus.UseVisualStyleBackColor = true;
-            this.buttonCreateAccordionBus.Click += new System.EventHandler(this.buttonCreateAccordionBus_Click);
-            // 
             // FormBus
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.buttonCreateAccordionBus);
-            this.Controls.Add(this.buttonCreate);
             this.Controls.Add(this.buttonDown);
             this.Controls.Add(this.buttonRight);
             this.Controls.Add(this.buttonLeft);
@@ -143,8 +118,6 @@
         private System.Windows.Forms.Button buttonLeft;
         private System.Windows.Forms.Button buttonRight;
         private System.Windows.Forms.Button buttonDown;
-        private System.Windows.Forms.Button buttonCreate;
-        private System.Windows.Forms.Button buttonCreateAccordionBus;
     }
 }
 
