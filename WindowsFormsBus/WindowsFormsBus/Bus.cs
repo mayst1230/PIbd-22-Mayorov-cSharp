@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 
 namespace WindowsFormsBus
 {
-    public class Bus: Vehicle
+    public class Bus : Vehicle
     {
         protected readonly int busWidth = 190;
         /// <summary>
@@ -78,7 +73,8 @@ namespace WindowsFormsBus
             }
         }
 
-        public override void DrawBus(Graphics g) {
+        public override void DrawBus(Graphics g)
+        {
             Pen pen = new Pen(Color.Black);
             Brush body = new SolidBrush(MainColor);
             Brush wheels = new SolidBrush(Color.Black);

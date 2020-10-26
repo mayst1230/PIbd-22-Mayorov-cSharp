@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace WindowsFormsBus
 {
@@ -12,7 +13,11 @@ namespace WindowsFormsBus
         /// <summary>
         /// Массив объектов, которые храним
         /// </summary>
-        private readonly T[] _places;
+        private readonly List<T> _places;
+        /// <summary>
+        /// Максимальное количество мест на парковке
+        /// </summary>
+        private readonly int _maxCount;
         /// <summary>
         /// Ширина окна отрисовки
         /// </summary>
@@ -38,13 +43,10 @@ namespace WindowsFormsBus
         {
             int width = picWidth / _placeSizeWidth;
             int height = picHeight / _placeSizeHeight;
-            _places = new T[width * height];
+            _maxCount = width * height;
             pictureWidth = picWidth;
             pictureHeight = picHeight;
-        }
-        private bool IsEmpty(int indexParkingPlace)
-        {
-            return (_places[indexParkingPlace] == null);
+            _places = new List<T>();
         }
         /// <summary>
         /// Перегрузка оператора сложения
@@ -56,20 +58,14 @@ namespace WindowsFormsBus
 
         public static bool operator +(Parking<T> parking, T bus)
         {
-            for (int i = 0; i < parking._places.Length; i++)
+            if (parking._places.Count >= parking._maxCount)
             {
-                if (parking.IsEmpty(i))
-                {
-                    parking._places[i] = bus;
-                    bus.SetPosition(5 + i / 5 * parking._placeSizeWidth + 5,
-                     i % 5 * parking._placeSizeHeight + 15, parking.pictureWidth,
-                    parking.pictureHeight);
-                    return true;
-                }
+                return false;
             }
-            return false;
-        }
+            parking._places.Add(bus);
 
+            return true;
+        }
         /// <summary>
         /// Перегрузка оператора вычитания
         /// Логика действия: с парковки забираем автомобиль
@@ -79,17 +75,14 @@ namespace WindowsFormsBus
         /// <returns></returns>
         public static T operator -(Parking<T> p, int index)
         {
-            if (index < 0 || index > p._places.Length)
+            if (index < -1 || index > p._places.Count)
             {
                 return null;
             }
-            if (!p.IsEmpty(index))
-            {
-                T vehicle = p._places[index];
-                p._places[index] = null;
-                return vehicle;
-            }
-            return null;
+            T bus = p._places[index];
+            p._places.RemoveAt(index);
+            return bus;
+
         }
         /// <summary>
         /// Метод отрисовки парковки
@@ -98,10 +91,13 @@ namespace WindowsFormsBus
         public void Draw(Graphics g)
         {
             DrawMarking(g);
-            for (int i = 0; i < _places.Length; i++)
+            for (int i = 0; i < _places.Count; ++i)
             {
-                _places[i]?.DrawBus(g);
+                _places[i].SetPosition(5 + i / 5 * _placeSizeWidth + 5, i % 5 *
+               _placeSizeHeight + 15, pictureWidth, pictureHeight);
+                _places[i].DrawBus(g);
             }
+
         }
         /// <summary>
         /// Метод отрисовки разметки парковочных мест
