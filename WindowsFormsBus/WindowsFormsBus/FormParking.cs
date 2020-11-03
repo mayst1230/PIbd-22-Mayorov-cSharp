@@ -6,9 +6,6 @@ namespace WindowsFormsBus
 {
     public partial class FormParking : Form
     {
-        /// <summary>
-        /// Объект от класса-коллекции парковок
-        /// </summary>
         private readonly ParkingCollection parkingCollection;
 
         public FormParking()
@@ -17,9 +14,6 @@ namespace WindowsFormsBus
             parkingCollection = new ParkingCollection(pictureBoxParking.Width, pictureBoxParking.Height);
         }
 
-        /// <summary>
-        /// Заполнение listBoxLevels
-        /// </summary>
         private void ReloadLevels()
         {
             int index = listBoxParkings.SelectedIndex;
@@ -45,53 +39,41 @@ namespace WindowsFormsBus
             Bitmap bmp = new Bitmap(pictureBoxParking.Width, pictureBoxParking.Height);
             Graphics gr = Graphics.FromImage(bmp);
             if (listBoxParkings.SelectedIndex > -1)
-            {   
+            {
                 parkingCollection[listBoxParkings.SelectedItem.ToString()].Draw(gr);
             }
             pictureBoxParking.Image = bmp;
         }
 
-        private void parkingButtonBus_Click(object sender, EventArgs e)
+        private void buttonAddBus_Click(object sender, EventArgs e)
         {
-            if (listBoxParkings.SelectedIndex > -1)
+            if (listBoxParkings.SelectedItem != null)
             {
-                ColorDialog dialog = new ColorDialog();
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    Bus bus = new Bus(100, 1000, dialog.Color);
-                    if (parkingCollection[listBoxParkings.SelectedItem.ToString()] + bus)
-                    {
-                        Draw();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Парковка переполнена");
-                    }
-                }
+                FormBusConfig formBusConfig = new FormBusConfig();
+                formBusConfig.AddEvent(AddBus);
+                formBusConfig.AddEvent(AddBusMessage);
+                formBusConfig.Show();
             }
-
+        }
+        private void AddBusMessage(Vehicle bus)
+        {
+            if (bus != null)
+            {
+                MessageBox.Show("Объект не пустой, создаем");
+            }
         }
 
-        private void parkingButtonAccordionBus_Click(object sender, EventArgs e)
+        private void AddBus(Vehicle bus)
         {
-            if (listBoxParkings.SelectedIndex > -1)
+            if (bus != null && listBoxParkings.SelectedIndex > -1)
             {
-                ColorDialog dialog = new ColorDialog();
-                if (dialog.ShowDialog() == DialogResult.OK)
+                if ((parkingCollection[listBoxParkings.SelectedItem.ToString()]) + bus)
                 {
-                    ColorDialog dialogDop = new ColorDialog();
-                    if (dialogDop.ShowDialog() == DialogResult.OK)
-                    {
-                        AccordionBus bus = new AccordionBus(100, 1000, dialog.Color, dialogDop.Color, true, true, true, true, true, true, true, true, true);
-                        if (parkingCollection[listBoxParkings.SelectedItem.ToString()] + bus)
-                        {
-                            Draw();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Парковка переполнена");
-                        }
-                    }
+                    Draw();
+                }
+                else
+                {
+                    MessageBox.Show("Автобус не удалось поставить");
                 }
             }
         }
