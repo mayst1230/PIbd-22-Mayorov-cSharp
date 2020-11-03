@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace WindowsFormsBus
 {
-     class AccordionBus : Bus
+    internal class AccordionBus : Bus
     {
         public Color OtherColor { private set; get; }
 
@@ -21,34 +16,27 @@ namespace WindowsFormsBus
 
         public bool BackWheels { private set; get; }
 
-        public AccordionBus(int maxSpeed, float weight, Color mainColor, Color otherColor, 
-            bool accordion, bool frontWheels, bool backWheels, bool frontBody, 
-            bool backBody, bool frontDoors, bool backDoors, bool frontWindows, 
-            bool backWindows) : base(maxSpeed, weight, mainColor, 300, 100)
+        public AccordionBus(int maxSpeed, float weight, Color mainColor, Color otherColor,
+            bool accordion, bool backDoors, bool backWindows) : base(maxSpeed, weight, mainColor, 300, 100)
         {
-            OtherColor = otherColor;       
-            BackBody = backBody;     
+            OtherColor = otherColor;
             BackWindows = backWindows;
             BackDoors = backDoors;
-            Accordion = accordion;  
-            BackWheels = backWheels;
+            Accordion = accordion;
         }
 
-        public override void DrawBus(Graphics g) 
+        public override void DrawBus(Graphics g)
         {
             Pen pen = new Pen(Color.Black);
             Brush wheels = new SolidBrush(Color.Black);
             Brush body = new SolidBrush(MainColor);
             Brush accordionBrush = new SolidBrush(OtherColor);
 
-            if (BackBody)
-            {
-                g.DrawRectangle(pen, _startPosX + 190, _startPosY - 1, 80, 42);
-                g.FillRectangle(body, _startPosX + 190, _startPosY - 1, 80, 42);
+            g.DrawRectangle(pen, _startPosX + 190, _startPosY - 1, 80, 42);
+            g.FillRectangle(body, _startPosX + 190, _startPosY - 1, 80, 42);
 
-                Brush brDarkGreen = new SolidBrush(Color.DarkGreen);
-                g.FillRectangle(brDarkGreen, _startPosX + 190, _startPosY - 1, 80, 25);
-            }
+            Brush brDarkGreen = new SolidBrush(Color.DarkGreen);
+            g.FillRectangle(brDarkGreen, _startPosX + 190, _startPosY - 1, 80, 25);
 
             base.DrawBus(g);
 
@@ -69,23 +57,22 @@ namespace WindowsFormsBus
                 g.DrawRectangle(pen, _startPosX + 185, _startPosY, 5, 40);
             }
 
-            if (BackWindows) {
+            if (BackWindows)
+            {
                 //заднее окно
                 Brush brLightBlueWindows = new SolidBrush(Color.LightBlue);
                 g.FillRectangle(brLightBlueWindows, _startPosX + 220, _startPosY + 5, 20, 20);
                 g.DrawRectangle(pen, _startPosX + 220, _startPosY + 5, 20, 20);
             }
 
-            if (BackWheels)
-            {
-                //заднее колесо
-                g.FillEllipse(wheels, _startPosX + 220, _startPosY + 30, 20, 20);
-                g.DrawEllipse(pen, _startPosX + 220, _startPosY + 30, 20, 20);
-            }
+            //заднее колесо
+            g.FillEllipse(wheels, _startPosX + 220, _startPosY + 30, 20, 20);
+            g.DrawEllipse(pen, _startPosX + 220, _startPosY + 30, 20, 20);
 
-            if (BackDoors) {
+            if (BackDoors)
+            {
                 //задние двери
-                Brush brBlue = new SolidBrush(Color.LightBlue);               
+                Brush brBlue = new SolidBrush(Color.LightBlue);
                 g.FillRectangle(brBlue, _startPosX + 195, _startPosY + 10, 20, 30);
                 g.FillRectangle(brBlue, _startPosX + 245, _startPosY + 10, 20, 30);
 
@@ -95,6 +82,10 @@ namespace WindowsFormsBus
                 g.DrawRectangle(pen, _startPosX + 245, _startPosY + 10, 20, 30);
                 g.DrawRectangle(pen, _startPosX + 253, _startPosY + 10, 2, 30);
             }
+        }
+        public void SetOtherColor(Color color)
+        {
+            OtherColor = color;
         }
     }
 }

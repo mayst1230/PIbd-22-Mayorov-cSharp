@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace WindowsFormsBus
 {
@@ -15,13 +10,13 @@ namespace WindowsFormsBus
         protected int pictureHeight;
 
         protected float _startPosX;
-       
+
         protected float _startPosY;
-       
+
         public int MaxSpeed { protected set; get; }
-       
+
         public float Weight { protected set; get; }
-    
+
         public Color MainColor { protected set; get; }
         public void SetPosition(int x, int y, int width, int height)
         {
@@ -29,6 +24,11 @@ namespace WindowsFormsBus
             _startPosY = y;
             pictureWidth = width;
             pictureHeight = height;
+        }
+
+        public void SetMainColor(Color color)
+        {
+            MainColor = color;
         }
 
         public abstract void DrawBus(Graphics g);

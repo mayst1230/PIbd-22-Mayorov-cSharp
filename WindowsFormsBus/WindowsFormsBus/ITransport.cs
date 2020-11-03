@@ -15,5 +15,7 @@ namespace WindowsFormsBus
 
         /// <param name="g"><
         void DrawBus(Graphics g);
+
+        void SetMainColor(Color color);
     }
 }
