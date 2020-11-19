@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-
+﻿using System;
+using System.Drawing;
 
 namespace WindowsFormsBus
 {
@@ -11,6 +11,10 @@ namespace WindowsFormsBus
         /// </summary>
         protected readonly int busHeight = 100;
         /// <summary>
+        /// Разделитель для записи информации по объекту в файл
+        /// </summary>
+        protected readonly char separator = ';';
+        /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="maxSpeed">Максимальная скорость</param>
@@ -21,6 +25,20 @@ namespace WindowsFormsBus
             MaxSpeed = maxSpeed;
             Weight = weight;
             MainColor = mainColor;
+        }
+        /// <summary>
+        /// Конструктор для загрузки с файла
+        /// </summary>
+        /// <param name="info">Информация по объекту</param>
+        public Bus(string info)
+        {
+            string[] strs = info.Split(separator);
+            if (strs.Length == 3)
+            {
+                MaxSpeed = Convert.ToInt32(strs[0]);
+                Weight = Convert.ToInt32(strs[1]);
+                MainColor = Color.FromName(strs[2]);
+            }
         }
         /// <summary>
         /// Конструкторс изменением размеров машины
@@ -115,6 +133,10 @@ namespace WindowsFormsBus
 
             g.DrawRectangle(pen, _startPosX + 80, _startPosY + 10, 20, 30);
             g.DrawRectangle(pen, _startPosX + 88, _startPosY + 10, 2, 30);
+        }
+        public override string ToString()
+        {
+            return $"{MaxSpeed}{separator}{Weight}{separator}{MainColor.Name}";
         }
     }
 }
