@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace WindowsFormsBus
 {
@@ -6,15 +7,11 @@ namespace WindowsFormsBus
     {
         public Color OtherColor { private set; get; }
 
-        public bool BackBody { private set; get; }
-
         public bool BackDoors { private set; get; }
 
         public bool Accordion { private set; get; }
 
         public bool BackWindows { private set; get; }
-
-        public bool BackWheels { private set; get; }
 
         public AccordionBus(int maxSpeed, float weight, Color mainColor, Color otherColor,
             bool accordion, bool backDoors, bool backWindows) : base(maxSpeed, weight, mainColor, 300, 100)
@@ -23,6 +20,21 @@ namespace WindowsFormsBus
             BackWindows = backWindows;
             BackDoors = backDoors;
             Accordion = accordion;
+        }
+
+        public AccordionBus(string info) : base(info)
+        {
+            string[] strs = info.Split(separator);
+            if (strs.Length == 7)
+            {
+                MaxSpeed = Convert.ToInt32(strs[0]);
+                Weight = Convert.ToInt32(strs[1]);
+                MainColor = Color.FromName(strs[2]);
+                OtherColor = Color.FromName(strs[3]);
+                Accordion = Convert.ToBoolean(strs[4]);
+                BackDoors = Convert.ToBoolean(strs[5]);
+                BackWindows = Convert.ToBoolean(strs[6]);
+            }
         }
 
         public override void DrawBus(Graphics g)
@@ -86,6 +98,11 @@ namespace WindowsFormsBus
         public void SetOtherColor(Color color)
         {
             OtherColor = color;
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}{separator}{OtherColor.Name}{separator}{Accordion}{separator}{BackDoors}{separator}{BackWindows}";
         }
     }
 }
