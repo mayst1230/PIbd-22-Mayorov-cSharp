@@ -19,7 +19,7 @@ namespace WindowsFormsBus
         /// </summary>
         private readonly int _maxCount;
         /// <summary>
-        /// Ширина окна отрисовки
+        /// Ширина окна отрисовки   
         /// </summary>
         private readonly int pictureWidth;
         /// <summary>
@@ -60,7 +60,7 @@ namespace WindowsFormsBus
         {
             if (parking._places.Count >= parking._maxCount)
             {
-                return false;
+                throw new ParkingOverflowException();
             }
             parking._places.Add(bus);
 
@@ -77,7 +77,7 @@ namespace WindowsFormsBus
         {
             if (index < -1 || index > p._places.Count)
             {
-                return null;
+                throw new ParkingNotFoundException(index);
             }
             T bus = p._places[index];
             p._places.RemoveAt(index);

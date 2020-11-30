@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,10 +9,16 @@ namespace WindowsFormsBus
     {
         private readonly ParkingCollection parkingCollection;
 
+        /// <summary>
+        /// Логгер
+        /// </summary>
+        private readonly Logger logger;
+
         public FormParking()
         {
             InitializeComponent();
             parkingCollection = new ParkingCollection(pictureBoxParking.Width, pictureBoxParking.Height);
+            logger = LogManager.GetCurrentClassLogger();
         }
 
         private void ReloadLevels()
@@ -51,15 +58,7 @@ namespace WindowsFormsBus
             {
                 FormBusConfig formBusConfig = new FormBusConfig();
                 formBusConfig.AddEvent(AddBus);
-                formBusConfig.AddEvent(AddBusMessage);
                 formBusConfig.Show();
-            }
-        }
-        private void AddBusMessage(Vehicle bus)
-        {
-            if (bus != null)
-            {
-                MessageBox.Show("Объект не пустой, создаем");
             }
         }
 
@@ -67,13 +66,29 @@ namespace WindowsFormsBus
         {
             if (bus != null && listBoxParkings.SelectedIndex > -1)
             {
-                if ((parkingCollection[listBoxParkings.SelectedItem.ToString()]) + bus)
+                try
                 {
+                    if ((parkingCollection[listBoxParkings.SelectedItem.ToString()]) + bus)
+                    {
+                        Draw();
+                        logger.Info($"Добавлен автобус {bus}");
+                    }
+                    else
+                    {
+                        logger.Warn("Автобус не удалось поставить");
+                        MessageBox.Show("Автобус не удалось поставить");
+                    }
                     Draw();
                 }
-                else
+                catch (ParkingOverflowException ex)
                 {
-                    MessageBox.Show("Автобус не удалось поставить");
+                    logger.Warn("Переполнение " + ex.Message);
+                    MessageBox.Show(ex.Message, "Переполнение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warn("Неизвестная ошибка" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -82,15 +97,30 @@ namespace WindowsFormsBus
         {
             if (listBoxParkings.SelectedIndex > -1 && maskedTextBoxBus.Text != "")
             {
-                Vehicle bus = parkingCollection[listBoxParkings.SelectedItem.ToString()] - Convert.ToInt32(maskedTextBoxBus.Text);
-                if (bus != null)
+                try
                 {
-                    FormBus form = new FormBus();
-                    form.SetBus(bus);
-                    form.ShowDialog();
+                    Vehicle bus = parkingCollection[listBoxParkings.SelectedItem.ToString()] - Convert.ToInt32(maskedTextBoxBus.Text);
+                    if (bus != null)
+                    {
+                        FormBus form = new FormBus();
+                        form.SetBus(bus);
+                        form.ShowDialog();
+                        logger.Info($"Изъят автобус {bus} с места{ maskedTextBoxBus.Text }");
+                    }
                 }
-                Draw();
+                catch (ParkingNotFoundException ex)
+                {
+                    logger.Warn("Не найдена парковка" + ex.Message);
+                    MessageBox.Show(ex.Message, "Не найдено", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warn("Неизвестная ошибка" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
+            Draw();
+            ReloadLevels();
         }
         /// <summary>
         /// Обработка нажатия кнопки "Создать парковку"
@@ -102,9 +132,10 @@ namespace WindowsFormsBus
             if (string.IsNullOrEmpty(textBoxNewLevelName.Text))
             {
                 MessageBox.Show("Введите название парковки", "Ошибка",
-               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            logger.Info($"Добавили парковку {textBoxNewLevelName.Text}");
             parkingCollection.AddParking(textBoxNewLevelName.Text);
             ReloadLevels();
             Draw();
@@ -121,6 +152,7 @@ namespace WindowsFormsBus
             {
                 if (MessageBox.Show($"Удалить парковку {listBoxParkings.SelectedItem.ToString()}?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
+                    logger.Info($"Удалили парковку{ listBoxParkings.SelectedItem.ToString()}");
                     parkingCollection.DelParking(listBoxParkings.SelectedItem.ToString());
                     ReloadLevels();
                 }
@@ -130,6 +162,7 @@ namespace WindowsFormsBus
 
         private void listBoxParkings_SelectedIndexChanged(object sender, EventArgs e)
         {
+            logger.Info($"Перешли на парковку {listBoxParkings.SelectedItem.ToString()}");
             Draw();
         }
         /// <summary>
@@ -141,15 +174,16 @@ namespace WindowsFormsBus
         {
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (parkingCollection.SaveData(saveFileDialog.FileName))
+                try
                 {
-                    MessageBox.Show("Сохранение прошло успешно", "Результат",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    parkingCollection.SaveData(saveFileDialog.FileName);
+                    MessageBox.Show("Сохранение прошло успешно", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    logger.Info("Сохранено в файл " + saveFileDialog.FileName);
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Не сохранилось", "Результат",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Warn("Неизвестная ошибка при сохранении" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка при сохранении", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -162,15 +196,23 @@ namespace WindowsFormsBus
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (parkingCollection.LoadData(openFileDialog.FileName))
+                try
                 {
-                    MessageBox.Show("Загрузка прошла успешно", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    parkingCollection.LoadData(openFileDialog.FileName);
+                    MessageBox.Show("Загрузили", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    logger.Info("Загружено из файла " + openFileDialog.FileName);
                     ReloadLevels();
                     Draw();
                 }
-                else
+                catch (ParkingOverflowException ex)
                 {
-                    MessageBox.Show("Не загрузили", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Warn("Занятое место" + ex.Message);
+                    MessageBox.Show(ex.Message, "Занятое место", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warn("Неизвестная ошибка при сохранении" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка при сохранении", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

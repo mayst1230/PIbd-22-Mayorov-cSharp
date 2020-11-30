@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace WindowsFormsBus
 {
@@ -86,7 +88,7 @@ namespace WindowsFormsBus
         /// </summary>
         /// <param name="filename">Путь и имя файла</param>
         /// <returns></returns>
-        public bool SaveData(string filename)
+        public void SaveData(string filename)
         {
             if (File.Exists(filename))
             {
@@ -120,60 +122,66 @@ namespace WindowsFormsBus
                     }
                 }
             }
-            return true;
         }
         /// <summary>
         /// Загрузка нформации по автомобилям на парковках из файла
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public bool LoadData(string filename)
+        public void LoadData(string filename)
         {
             if (!File.Exists(filename))
             {
-                return false;
+                throw new FileNotFoundException();
             }
-            using (StreamReader sr = new StreamReader(filename))
+            string bufferTextFromFile = "";
+            using (FileStream fs = new FileStream(filename, FileMode.Open))
             {
-                string line = sr.ReadLine();
-                string key = string.Empty;
-                Vehicle bus = null;
-                if (line.Contains("ParkingCollection"))
+                byte[] b = new byte[fs.Length];
+                UTF8Encoding temp = new UTF8Encoding(true);
+                while (fs.Read(b, 0, b.Length) > 0)
                 {
-                    parkingStages.Clear();
-                    line = sr.ReadLine();
-                    while (line != null)
-                    {
-                        if (line.Contains("Parking"))
-                        {
-                            key = line.Split(separator)[1];
-                            parkingStages.Add(key, new Parking<Vehicle>(pictureWidth, pictureHeight));
-                            line = sr.ReadLine();
-                            continue;
-                        }
-                        if (string.IsNullOrEmpty(line))
-                        {
-                            line = sr.ReadLine();
-                            continue;
-                        }
-                        if (line.Split(separator)[0] == "Bus")
-                        {
-                            bus = new Bus(line.Split(separator)[1]);
-                        }
-                        else if (line.Split(separator)[0] == "AccordionBus")
-                        {
-                            bus = new AccordionBus(line.Split(separator)[1]);
-                        }
-                        bool result = parkingStages[key] + bus;
-                        if (!result)
-                        {
-                            return false;
-                        }
-                        line = sr.ReadLine();
-                    }
-                    return true;
+                    bufferTextFromFile += temp.GetString(b);
                 }
-                return false;
+            }
+            bufferTextFromFile = bufferTextFromFile.Replace("\r", "");
+            string[] strs = bufferTextFromFile.Split('\n');
+            if (strs[0].Contains("ParkingCollection"))
+            {
+                parkingStages.Clear();
+            }
+            else
+            {
+                throw new FormatException("Неверный формат файла");
+            }
+            Vehicle bus = null;
+            string key = string.Empty;
+            for (int i = 1; i < strs.Length; ++i)
+            {
+                //идем по считанным записям
+                if (strs[i].Contains("Parking"))
+                {
+                    //начинаем новую парковку
+                    key = strs[i].Split(separator)[1];
+                    parkingStages.Add(key, new Parking<Vehicle>(pictureWidth, pictureHeight));
+                    continue;
+                }
+                if (string.IsNullOrEmpty(strs[i]))
+                {
+                    continue;
+                }
+                if (strs[i].Split(separator)[0] == "Bus")
+                {
+                    bus = new Bus(strs[i].Split(separator)[1]);
+                }
+                else if (strs[i].Split(separator)[0] == "AccordionBus")
+                {
+                    bus = new AccordionBus(strs[i].Split(separator)[1]);
+                }
+                if (!(parkingStages[key] + bus))
+                {
+                    throw new TypeLoadException("Не удалось загрузить локомотив на парковку ");
+                }
             }
         }
     }
