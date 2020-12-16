@@ -85,6 +85,10 @@ namespace WindowsFormsBus
                     logger.Warn("Переполнение " + ex.Message);
                     MessageBox.Show(ex.Message, "Переполнение", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                catch (ParkingAlreadyHaveException ex)
+                {
+                    MessageBox.Show(ex.Message, "Дублирование", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
                     logger.Warn("Неизвестная ошибка" + ex.Message);
@@ -211,9 +215,19 @@ namespace WindowsFormsBus
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn("Неизвестная ошибка при сохранении" + ex.Message);
-                    MessageBox.Show(ex.Message, "Неизвестная ошибка при сохранении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Warn("Неизвестная ошибка при загрузке" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка при загрузке", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void buttonSorted_Click(object sender, EventArgs e)
+        {
+            if (listBoxParkings.SelectedIndex > -1)
+            {
+                parkingCollection[listBoxParkings.SelectedItem.ToString()].Sort();
+                Draw();
+                logger.Info("Сортировка уровней");
             }
         }
     }

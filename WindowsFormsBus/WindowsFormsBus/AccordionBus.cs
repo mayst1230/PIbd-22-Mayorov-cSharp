@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace WindowsFormsBus
 {
-    internal class AccordionBus : Bus
+    internal class AccordionBus : Bus, IEquatable<AccordionBus>
     {
         public Color OtherColor { private set; get; }
 
@@ -103,6 +103,49 @@ namespace WindowsFormsBus
         public override string ToString()
         {
             return $"{base.ToString()}{separator}{OtherColor.Name}{separator}{Accordion}{separator}{BackDoors}{separator}{BackWindows}";
+        }
+
+        public bool Equals(AccordionBus other)
+        {
+            var res = base.Equals(other);
+            if (!res)
+            {
+                return false;
+            }
+            if (OtherColor != other.OtherColor)
+            {
+                return false;
+            }
+            if (Accordion != other.Accordion)
+            {
+                return false;
+            }
+            if (BackDoors != other.BackDoors)
+            {
+                return false;
+            }
+            if (BackWindows != other.BackWindows)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (!(obj is AccordionBus busObj))
+            {
+                return false;
+            }
+            else
+            {
+                return Equals(busObj);
+            }
         }
     }
 }
