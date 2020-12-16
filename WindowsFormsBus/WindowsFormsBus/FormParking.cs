@@ -215,8 +215,8 @@ namespace WindowsFormsBus
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn("Неизвестная ошибка при сохранении" + ex.Message);
-                    MessageBox.Show(ex.Message, "Неизвестная ошибка при сохранении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Warn("Неизвестная ошибка при загрузке" + ex.Message);
+                    MessageBox.Show(ex.Message, "Неизвестная ошибка при загрузке", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

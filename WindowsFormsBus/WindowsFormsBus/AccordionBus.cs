@@ -107,23 +107,8 @@ namespace WindowsFormsBus
 
         public bool Equals(AccordionBus other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-            if (GetType().Name != other.GetType().Name)
-            {
-                return false;
-            }
-            if (MaxSpeed != other.MaxSpeed)
-            {
-                return false;
-            }
-            if (Weight != other.Weight)
-            {
-                return false;
-            }
-            if (MainColor != other.MainColor)
+            var res = base.Equals(other);
+            if (!res)
             {
                 return false;
             }

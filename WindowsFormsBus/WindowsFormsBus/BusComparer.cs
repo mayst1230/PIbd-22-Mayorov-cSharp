@@ -44,7 +44,7 @@ namespace WindowsFormsBus
 
         private int ComparerAccordionBus(AccordionBus x, AccordionBus y)
         {
-            int res = ComparerAccordionBus(x, y);
+            var res = ComparerBus(x, y);
             if (res != 0)
             {
                 return res;

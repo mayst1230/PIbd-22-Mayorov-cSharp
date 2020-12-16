@@ -95,24 +95,27 @@ namespace WindowsFormsBus
             using (StreamWriter sw = new StreamWriter(filename))
             {
                 sw.WriteLine($"ParkingCollection");
-                foreach (KeyValuePair<string, Parking<Vehicle>> level in parkingStages)
+                foreach (var level in parkingStages)
                 {
                     //Начинаем парковку
                     sw.WriteLine($"Parking{separator}{level.Key}");
                     foreach (ITransport bus in level.Value)
                     {
-                        //если место не пустое
-                        //Записываем тип машины
-                        if (bus.GetType().Name == "Bus")
+                        if (bus != null)
                         {
-                            sw.Write($"Bus{separator}");
+                            //если место не пустое
+                            //Записываем тип машины
+                            if (bus.GetType().Name == "Bus")
+                            {
+                                sw.Write($"Bus{separator}");
+                            }
+                            if (bus.GetType().Name == "AccordionBus")
+                            {
+                                sw.Write($"AccordionBus{separator}");
+                            }
+                            //Записываемые параметры
+                            sw.WriteLine(bus);
                         }
-                        if (bus.GetType().Name == "AccordionBus")
-                        {
-                            sw.Write($"AccordionBus{separator}");
-                        }
-                        //Записываемые параметры
-                        sw.WriteLine(bus);
                     }
                 }
             }
@@ -129,9 +132,10 @@ namespace WindowsFormsBus
                 throw new FileNotFoundException();
             }
             using (StreamReader streamReader = new StreamReader
-            (filename, System.Text.Encoding.Default))
+            (filename))
             {
-                if (streamReader.ReadLine().Contains("ParkingCollection"))
+                string bufferTextFromFile = streamReader.ReadLine();
+                if (bufferTextFromFile.Contains("ParkingCollection"))
                 {
                     parkingStages.Clear();
                 }
@@ -141,28 +145,31 @@ namespace WindowsFormsBus
                 }
                 Vehicle bus = null;
                 string key = string.Empty;
-                string line;
-                for (int i = 0; (line = streamReader.ReadLine()) != null; i++)
+
+                while (!streamReader.EndOfStream)
                 {
-                    if (line.Contains("Parking"))
+                    bufferTextFromFile = streamReader.ReadLine();
+                    if (string.IsNullOrEmpty(bufferTextFromFile))
                     {
-                        key = line.Split(separator)[1];
-                        parkingStages.Add(key, new Parking<Vehicle>(pictureWidth, pictureHeight));
+                        continue;
                     }
-                    else if (line.Contains(separator))
+                    if (bufferTextFromFile.Contains("Parking"))
                     {
-                        if (line.Contains("Bus"))
-                        {
-                            bus = new Bus(line.Split(separator)[1]);
-                        }
-                        else if (line.Contains("AccordionBus"))
-                        {
-                            bus = new AccordionBus(line.Split(separator)[1]);
-                        }
-                        if (!(parkingStages[key] + bus))
-                        {
-                            throw new TypeLoadException("Не удалось загрузить автобус на парковку");
-                        }
+                        key = bufferTextFromFile.Split(separator)[1];
+                        parkingStages.Add(key, new Parking<Vehicle>(pictureWidth, pictureHeight));
+                        continue;
+                    }
+                    if (bufferTextFromFile.Split(separator)[0] == "Bus")
+                    {
+                        bus = new Bus(bufferTextFromFile.Split(separator)[1]);
+                    }
+                    else if (bufferTextFromFile.Split(separator)[0] == "AccordionBus")
+                    {
+                        bus = new AccordionBus(bufferTextFromFile.Split(separator)[1]);
+                    }
+                    if (!(parkingStages[key] + bus))
+                    {
+                        throw new TypeLoadException("Не удалось загрузить автобус на парковку");
                     }
                 }
             }

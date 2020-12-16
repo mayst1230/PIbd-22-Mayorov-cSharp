@@ -142,10 +142,7 @@ namespace WindowsFormsBus
         /// <summary>
         /// Сортировка автомобилей на парковке
         /// </summary>
-        public void Sort()
-        {
-            _places.Sort((IComparer<T>)new BusComparer());
-        }
+        public void Sort() => _places.Sort((IComparer<T>)new BusComparer());
 
         /// <summary>
         /// Метод интерфейса IEnumerator, вызываемый при удалении объекта
